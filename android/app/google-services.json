@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473996376153",
+    "project_id": "teckiza-b2c08",
+    "storage_bucket": "teckiza-b2c08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473996376153:android:deae885fcec1341c4ad948",
+        "android_client_info": {
+          "package_name": "com.example.empire_ent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPeAmw2bp3AR00N5RiOX9WsiGZLOx9k3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
