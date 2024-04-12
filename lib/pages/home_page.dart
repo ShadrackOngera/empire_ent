@@ -15,6 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController ticketId = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
+  final saveDetailsKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,34 +28,46 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          children: [
-            PrimaryTextField(
-              obsecureText: false,
-              controller: ticketId,
-              hintText: 'Ticket Id',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              obsecureText: false,
-              controller: phoneNumber,
-              hintText: 'Phone Number',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryButton(
-              onTap: () => Database().createUser('Loracodes', 'email yake').then(
-                    (value) => WidgetHelper.snackbar("Great", 'Saved'),
-                  ),
-              child: PrimaryText(
-                text: 'add user',
-                color: Theme.of(context).colorScheme.inversePrimary,
+        child: Form(
+          key: saveDetailsKey,
+          child: Column(
+            children: [
+              PrimaryTextField(
+                obsecureText: false,
+                controller: ticketId,
+                hintText: 'Ticket Id',
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              PrimaryTextField(
+                obsecureText: false,
+                controller: phoneNumber,
+                hintText: 'Phone Number',
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              PrimaryButton(
+                onTap: () {
+                  if (saveDetailsKey.currentState!.validate()) {
+                    Database()
+                        .saveTicket(ticketId.text, phoneNumber.text)
+                        .then((value) {
+                      WidgetHelper.snackbar(
+                        "Great",
+                        'Saved',
+                      );
+                    });
+                  }
+                },
+                child: PrimaryText(
+                  text: 'save',
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
