@@ -1,3 +1,8 @@
+import 'package:empire_ent/database/database.dart';
+import 'package:empire_ent/utils/widget_helper.dart';
+import 'package:empire_ent/widgets/primary_button.dart';
+import 'package:empire_ent/widgets/primary_text.dart';
+import 'package:empire_ent/widgets/primary_text_field.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,8 +13,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController ticketId = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // title: ,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          children: [
+            PrimaryTextField(
+              obsecureText: false,
+              controller: ticketId,
+              hintText: 'Ticket Id',
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            PrimaryTextField(
+              obsecureText: false,
+              controller: phoneNumber,
+              hintText: 'Phone Number',
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            PrimaryButton(
+              onTap: () => Database().createUser('Loracodes', 'email yake').then(
+                    (value) => WidgetHelper.snackbar("Great", 'Saved'),
+                  ),
+              child: PrimaryText(
+                text: 'add user',
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
