@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class PrimaryTextField extends StatelessWidget {
   final TextEditingController controller;
   final String? hintText;
+  final String label;
   final bool obsecureText;
 
   const PrimaryTextField({
@@ -10,6 +11,7 @@ class PrimaryTextField extends StatelessWidget {
     required this.controller,
     this.hintText,
     required this.obsecureText,
+    required this.label,
   });
 
   @override
@@ -18,6 +20,7 @@ class PrimaryTextField extends StatelessWidget {
       controller: controller,
       obscureText: obsecureText,
       decoration: InputDecoration(
+        label: Text(label),
         hintText: hintText,
         hintStyle: TextStyle(
           color: Theme.of(context).colorScheme.inversePrimary,
@@ -35,7 +38,6 @@ class PrimaryTextField extends StatelessWidget {
           ),
         ),
       ),
-      
     );
   }
 }
