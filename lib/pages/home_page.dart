@@ -1,9 +1,11 @@
 import 'package:empire_ent/database/database.dart';
+import 'package:empire_ent/pages/pdf_page.dart';
 import 'package:empire_ent/utils/widget_helper.dart';
 import 'package:empire_ent/widgets/primary_button.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,21 +53,46 @@ class _HomePageState extends State<HomePage> {
               PrimaryButton(
                 onTap: () {
                   if (saveDetailsKey.currentState!.validate()) {
-                    Database()
-                        .saveTicket(ticketId.text, phoneNumber.text)
-                        .then((value) {
-                      WidgetHelper.snackbar(
-                        "Great",
-                        'Saved',
-                      );
-                    });
+                    Database().saveTicket(ticketId.text, phoneNumber.text).then(
+                          (value) {},
+                        );
                   }
                 },
                 child: PrimaryText(
-                  text: 'save',
+                  text: 'Widget Helper',
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              PrimaryButton(
+                onTap: () {
+                  Get.to(PdfPage());
+                },
+                child: PrimaryText(
+                  text: 'Preview',
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              // PrimaryButton(
+              //   onTap: () {
+              //     final snackBar =   SnackBar(
+              //       behavior: SnackBarBehavior.floating,
+              //       content: Text('This is a Snackbar'),
+              //       duration: Duration(seconds: 2),
+              //       showCloseIcon: true,
+              //     );
+              //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              //   },
+              //   child: PrimaryText(
+              //     text: 'save',
+              //     color: Theme.of(context).colorScheme.inversePrimary,
+              //   ),
+              // ),
             ],
           ),
         ),
