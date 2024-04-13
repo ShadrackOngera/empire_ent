@@ -16,6 +16,7 @@ class _ScanTabState extends State<ScanTab> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -23,7 +24,7 @@ class _ScanTabState extends State<ScanTab> {
               controller: _ticketNumberController,
               obsecureText: false,
               label: 'Ticket Number'),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
               try {

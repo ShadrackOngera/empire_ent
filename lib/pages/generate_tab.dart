@@ -2,6 +2,7 @@ import 'package:empire_ent/database/database.dart';
 import 'package:empire_ent/widgets/primary_button.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
+import 'package:empire_ent/widgets/quantity_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:io';
@@ -79,7 +80,7 @@ class _GenerateTabState extends State<GenerateTab> {
     databaseController.currentName.value = nameController.text;
     databaseController.currentEmail.value = emailController.text;
     databaseController.currentPhoneNumber.value = phoneNumberController.text;
-    databaseController.currentQuantity.value = quantityController.text;
+    // databaseController.currentQuantity.value = quantityController.text;
     databaseController.currentTicketType.value = ticketTypeController.text;
     if (saveDetailsKey.currentState!.validate()) {
       DatabaseController()
@@ -109,12 +110,20 @@ class _GenerateTabState extends State<GenerateTab> {
     });
   }
 
+  List<String> list = <String>[
+    'Single',
+    'Group',
+    'Couple',
+    'VIP',
+  ];
+  String dropdownValue = 'Single';
+
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 13, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 15),
             child: Form(
               key: saveDetailsKey,
               child: Column(
@@ -160,6 +169,53 @@ class _GenerateTabState extends State<GenerateTab> {
                     obsecureText: false,
                     controller: ticketTypeController,
                     hintText: 'Email',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PrimaryText(
+                              text: 'Ticket Type',
+                              color:
+                                  Theme.of(context).colorScheme.inversePrimary,
+                            ),
+                            DropdownButton<String>(
+                              value: databaseController.currentTicketType.value,
+                              isExpanded: true,
+                              onChanged: (String? value) {
+                                databaseController.currentTicketType.value =
+                                    value!;
+                              },
+                              items: list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PrimaryText(
+                            text: 'Ticket Type',
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                          QuantitySelector(onChanged: (value) {
+                            databaseController.currentQuantity.value = value;
+                          }),
+                        ],
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 20,

@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:empire_ent/utils/widget_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DatabaseController extends GetxController {
   Rx<String> currentName = ''.obs;
   Rx<String> currentEmail = ''.obs;
-  Rx<String> currentTicketType = ''.obs;
+  Rx<String> currentTicketType = 'Single'.obs;
   Rx<String> currentPhoneNumber = ''.obs;
   Rx<String> currentTicketId = ''.obs;
-  Rx<String> currentQuantity = ''.obs;
+  Rx<int> currentQuantity = 1.obs;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference tickets =
       FirebaseFirestore.instance.collection('tickets');
@@ -53,8 +52,8 @@ class DatabaseController extends GetxController {
           'Ticket Id': ticketId,
           'Phone Number': phoneNumber,
           'Email': email,
-          'Ticket Type': ticketType,
-          'Quantity': quantity,
+          'Ticket Type': currentTicketType.value,
+          'Quantity': currentQuantity.value,
           'Attended': false,
         });
       }
