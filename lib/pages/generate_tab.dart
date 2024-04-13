@@ -29,8 +29,13 @@ class _GenerateTabState extends State<GenerateTab> {
   TextEditingController nameController = TextEditingController();
   final saveDetailsKey = GlobalKey<FormState>();
   DatabaseController databaseController = Get.put(DatabaseController());
+  bool isLoading = false;
 
   Future<void> saveFile(Uint8List bytes, String name) async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final Directory dir = await getTemporaryDirectory();
       final File file = File('${dir.path}/$name.pdf');
@@ -44,13 +49,33 @@ class _GenerateTabState extends State<GenerateTab> {
       // Share the saved file
       Share.shareFiles(['${dir.path}/$name.pdf']);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error saving PDF: $e'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error saving PDF: $e'),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
     }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void clearForm() {
+    nameController.clear();
+    ticketIdController.clear();
+    phoneNumberController.clear();
+    emailController.clear();
+    ticketTypeController.clear();
+    quantityController.clear();
   }
 
   saveAndGenerate() {
+    setState(() {
+      isLoading = true;
+    });
     databaseController.currentName.value = nameController.text;
     databaseController.currentEmail.value = emailController.text;
     databaseController.currentPhoneNumber.value = phoneNumberController.text;
@@ -74,88 +99,97 @@ class _GenerateTabState extends State<GenerateTab> {
           await saveFile(bytes, 'Ticket');
         },
       );
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 13, vertical: 15),
-      child: Form(
-        key: saveDetailsKey,
-        child: Column(
-          children: [
-            PrimaryTextField(
-              label: 'Name',
-              obsecureText: false,
-              controller: nameController,
-              hintText: 'Name',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              label: 'Ticket Id',
-              obsecureText: false,
-              controller: ticketIdController,
-              hintText: 'Ticket Id',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              label: 'Phone Number',
-              obsecureText: false,
-              controller: phoneNumberController,
-              hintText: 'Phone Number',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              label: 'Email',
-              obsecureText: false,
-              controller: emailController,
-              hintText: 'Email',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              label: 'Ticket Type',
-              obsecureText: false,
-              controller: ticketTypeController,
-              hintText: 'Email',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryTextField(
-              label: 'Quantity',
-              obsecureText: false,
-              controller: quantityController,
-              hintText: 'Quantity',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            PrimaryButton(
-              onTap: () => saveAndGenerate(),
-              child: PrimaryText(
-                text: 'Save and Generate',
-                color: Theme.of(context).colorScheme.inversePrimary,
+    return isLoading
+        ? CircularProgressIndicator()
+        : SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 13, vertical: 15),
+            child: Form(
+              key: saveDetailsKey,
+              child: Column(
+                children: [
+                  PrimaryTextField(
+                    label: 'Name',
+                    obsecureText: false,
+                    controller: nameController,
+                    hintText: 'Name',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryTextField(
+                    label: 'Ticket Id',
+                    obsecureText: false,
+                    controller: ticketIdController,
+                    hintText: 'Ticket Id',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryTextField(
+                    label: 'Phone Number',
+                    obsecureText: false,
+                    controller: phoneNumberController,
+                    hintText: 'Phone Number',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryTextField(
+                    label: 'Email',
+                    obsecureText: false,
+                    controller: emailController,
+                    hintText: 'Email',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryTextField(
+                    label: 'Ticket Type',
+                    obsecureText: false,
+                    controller: ticketTypeController,
+                    hintText: 'Email',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryTextField(
+                    label: 'Quantity',
+                    obsecureText: false,
+                    controller: quantityController,
+                    hintText: 'Quantity',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  PrimaryButton(
+                    onTap: () => saveAndGenerate(),
+                    child: PrimaryText(
+                      text: 'Save and Generate',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Future<void> savePdfFile(Uint8List bytes) async {

@@ -45,13 +45,13 @@ class _OverviewTabState extends State<OverviewTab> {
                   var name = ticketData['Name'] as String? ?? 'No Name';
                   var phoneNumber = ticketData['Phone Number'] as String? ??
                       'No Phone Number';
-                  var email = ticketData['Email'] as String? ?? 'No Email';
+                  var attended = ticketData['Attended'] ?? false;
                   var quantity = ticketData['Quantity'] as String? ?? 'Null';
                   var ticketType =
                       ticketData['Ticket Type'] as String? ?? 'Invalid';
                   return ListTile(
                     leading: Icon(
-                      Icons.check_rounded,
+                      attended ? Icons.check_rounded : Icons.cancel,
                       size: 20,
                     ),
                     title: PrimaryText(
