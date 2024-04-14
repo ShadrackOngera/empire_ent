@@ -177,7 +177,40 @@ class _GenerateTabState extends State<GenerateTab> {
                               color:
                                   Theme.of(context).colorScheme.inversePrimary,
                             ),
-                            DropdownButton<String>(
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Obx(
+                              () => PrimaryText(
+                                text:
+                                    databaseController.currentTicketType.value,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ),
                               value: dropdownValue,
                               isExpanded: true,
                               onChanged: (value) {

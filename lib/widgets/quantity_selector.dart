@@ -29,6 +29,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
   void initState() {
     super.initState();
     _quantity = widget.initialValue;
+    databaseController.currentQuantity.value = widget.initialValue;
   }
 
   @override
@@ -44,8 +45,8 @@ class _QuantitySelectorState extends State<QuantitySelector> {
               if (_quantity > widget.minValue) {
                 _quantity--;
                 widget.onChanged(_quantity);
+                databaseController.currentQuantity.value = _quantity;
               }
-              
             });
           },
         ),
@@ -66,6 +67,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
               if (_quantity < widget.maxValue) {
                 _quantity++;
                 widget.onChanged(_quantity);
+                databaseController.currentQuantity.value = _quantity;
               }
             });
           },
