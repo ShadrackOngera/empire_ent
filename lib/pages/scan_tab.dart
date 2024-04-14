@@ -1,4 +1,4 @@
-import 'package:empire_ent/database/database.dart';
+import 'package:empire_ent/controllers/database_controller.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

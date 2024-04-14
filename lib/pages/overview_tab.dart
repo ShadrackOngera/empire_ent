@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:empire_ent/database/database.dart';
+import 'package:empire_ent/controllers/database_controller.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:flutter/material.dart';
 
