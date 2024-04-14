@@ -1,5 +1,7 @@
+import 'package:empire_ent/controllers/database_controller.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class QuantitySelector extends StatefulWidget {
   final int initialValue;
@@ -21,6 +23,7 @@ class QuantitySelector extends StatefulWidget {
 
 class _QuantitySelectorState extends State<QuantitySelector> {
   int _quantity = 1;
+  final DatabaseController databaseController = Get.put(DatabaseController());
 
   @override
   void initState() {
@@ -42,6 +45,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
                 _quantity--;
                 widget.onChanged(_quantity);
               }
+              
             });
           },
         ),
@@ -69,24 +73,4 @@ class _QuantitySelectorState extends State<QuantitySelector> {
       ],
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(
-        title: Text('Quantity Selector Example'),
-      ),
-      body: Center(
-        child: QuantitySelector(
-          initialValue: 1,
-          minValue: 1,
-          maxValue: 10,
-          onChanged: (value) {
-            print('Selected quantity: $value');
-          },
-        ),
-      ),
-    ),
-  ));
 }
