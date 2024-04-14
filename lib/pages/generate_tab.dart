@@ -1,4 +1,6 @@
 import 'package:empire_ent/controllers/database_controller.dart';
+import 'package:empire_ent/services/pdf/pdf_generator.dart';
+import 'package:empire_ent/utils/widget_helper.dart';
 import 'package:empire_ent/widgets/primary_button.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
@@ -42,17 +44,11 @@ class _GenerateTabState extends State<GenerateTab> {
       final File file = File('${dir.path}/$name.pdf');
       await file.writeAsBytes(bytes);
 
-      // Show a snackbar or any other feedback that the file has been saved
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('PDF saved successfully'),
-      ));
-
       Share.shareFiles(['${dir.path}/$name.pdf']);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error saving PDF: $e'),
-        ),
+      WidgetHelper.snackbar(
+        '',
+        'Error saving PDF: $e',
       );
       setState(() {
         isLoading = false;
@@ -92,8 +88,12 @@ class _GenerateTabState extends State<GenerateTab> {
       )
           .then(
         (value) async {
-          final doc = pw.Document();
-          doc.addPage(await _generatePdf());
+          var doc = await generatePdf(
+            email: emailController.text,
+            ticketType: databaseController.currentTicketType.value,
+            quantity: databaseController.currentQuantity.value,
+            ticketId: ticketIdController.text,
+          );
           var bytes = await doc.save();
           await saveFile(bytes, 'Ticket');
         },

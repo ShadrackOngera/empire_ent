@@ -1,7 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:empire_ent/controllers/database_controller.dart';
+import 'package:empire_ent/services/pdf/pdf_generator.dart';
+import 'package:empire_ent/utils/widget_helper.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OverviewTab extends StatefulWidget {
   const OverviewTab({super.key});
@@ -12,6 +20,31 @@ class OverviewTab extends StatefulWidget {
 
 class _OverviewTabState extends State<OverviewTab> {
   late Future<List<DocumentSnapshot>> _ticketsFuture;
+  bool isLoading = false;
+  Future<void> saveFile(Uint8List bytes, String name) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final Directory dir = await getTemporaryDirectory();
+      final File file = File('${dir.path}/$name.pdf');
+      await file.writeAsBytes(bytes);
+
+      Share.shareFiles(['${dir.path}/$name.pdf']);
+    } catch (e) {
+      WidgetHelper.snackbar(
+        '',
+        'Error saving PDF: $e',
+      );
+      setState(() {
+        isLoading = false;
+      });
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -19,9 +52,9 @@ class _OverviewTabState extends State<OverviewTab> {
     _ticketsFuture = _fetchTickets();
   }
 
+  DatabaseController databaseController = Get.put(DatabaseController());
   Future<List<DocumentSnapshot>> _fetchTickets() async {
-    DatabaseController database = DatabaseController();
-    return database.getTickets();
+    return databaseController.getTickets();
   }
 
   @override
@@ -73,6 +106,10 @@ class _OverviewTabState extends State<OverviewTab> {
                         var ticketData = snapshot.data?[index].data()
                             as Map<String, dynamic>;
                         var name = ticketData['Name'] as String? ?? 'No Name';
+                        var email =
+                            ticketData['Email'] as String? ?? 'No Email';
+                        var ticketId = ticketData['Ticket Id'] as String? ??
+                            'No Ticket Id';
                         var phoneNumber =
                             ticketData['Phone Number'] as String? ??
                                 'No Phone Number';
@@ -114,7 +151,16 @@ class _OverviewTabState extends State<OverviewTab> {
                             ],
                           ),
                           trailing: IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              var doc = await generatePdf(
+                                email: email,
+                                ticketType: ticketType,
+                                quantity: quantity,
+                                ticketId: ticketId,
+                              );
+                              var bytes = await doc.save();
+                              await saveFile(bytes, 'Ticket');
+                            },
                             icon: Icon(
                               Icons.gesture_sharp,
                               color:
