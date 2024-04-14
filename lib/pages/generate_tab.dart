@@ -80,8 +80,6 @@ class _GenerateTabState extends State<GenerateTab> {
     databaseController.currentTicketId.value = ticketIdController.text;
     databaseController.currentEmail.value = emailController.text;
     databaseController.currentPhoneNumber.value = phoneNumberController.text;
-    // databaseController.currentQuantity.value = quantityController.text;
-    databaseController.currentTicketType.value = ticketTypeController.text;
     if (saveDetailsKey.currentState!.validate()) {
       DatabaseController()
           .saveTicket(
@@ -89,8 +87,8 @@ class _GenerateTabState extends State<GenerateTab> {
         ticketIdController.text,
         phoneNumberController.text,
         emailController.text,
-        // ticketTypeController.text,
-        // quantityController.text,
+        databaseController.currentTicketType.value,
+        databaseController.currentQuantity.value,
       )
           .then(
         (value) async {
@@ -166,6 +164,7 @@ class _GenerateTabState extends State<GenerateTab> {
                     height: 20,
                   ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * .5,
@@ -177,19 +176,31 @@ class _GenerateTabState extends State<GenerateTab> {
                               color:
                                   Theme.of(context).colorScheme.inversePrimary,
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Obx(
-                              () => PrimaryText(
-                                text:
-                                    databaseController.currentTicketType.value,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                              ),
-                            ),
                             DropdownButtonFormField<String>(
+                              value: list.contains(databaseController
+                                      .currentTicketType.value)
+                                  ? databaseController.currentTicketType.value
+                                  : 'Single',
+                              isExpanded: true,
+                              onChanged: (value) {
+                                print('value: $value');
+                                databaseController.currentTicketType.value =
+                                    value!;
+                                print(
+                                    'object value: ${databaseController.currentTicketType.value}');
+                              },
+                              items: list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: PrimaryText(
+                                    text: value,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                  ),
+                                );
+                              }).toList(),
                               decoration: InputDecoration(
                                 hintStyle: TextStyle(
                                   color: Theme.of(context)
@@ -211,37 +222,16 @@ class _GenerateTabState extends State<GenerateTab> {
                                   ),
                                 ),
                               ),
-                              value: dropdownValue,
-                              isExpanded: true,
-                              onChanged: (value) {
-                                setState(() {
-                                  dropdownValue = value!;
-                                  databaseController.currentTicketType.value =
-                                      value;
-                                });
-                              },
-                              items: list.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: PrimaryText(
-                                    text: value,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
-                                  ),
-                                );
-                              }).toList(),
                             ),
                           ],
                         ),
                       ),
                       Spacer(),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           PrimaryText(
-                            text: 'Ticket Type',
+                            text: 'Quantity',
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                           QuantitySelector(
@@ -293,6 +283,7 @@ class _GenerateTabState extends State<GenerateTab> {
     await tempFile.writeAsBytes(bytes);
 
     final image = pw.MemoryImage(tempFile.readAsBytesSync());
+    final String ticketType = databaseController.currentTicketType.value;
     pw.TextStyle textStyle = pw.TextStyle(
       color: const PdfColor.fromInt(0xFF00004d),
       fontSize: 13,

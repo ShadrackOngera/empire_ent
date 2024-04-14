@@ -22,13 +22,12 @@ class QuantitySelector extends StatefulWidget {
 }
 
 class _QuantitySelectorState extends State<QuantitySelector> {
-  int _quantity = 1;
+  // int _quantity = 1;
   final DatabaseController databaseController = Get.put(DatabaseController());
 
   @override
   void initState() {
     super.initState();
-    _quantity = widget.initialValue;
     databaseController.currentQuantity.value = widget.initialValue;
   }
 
@@ -41,35 +40,31 @@ class _QuantitySelectorState extends State<QuantitySelector> {
         IconButton(
           icon: Icon(Icons.remove),
           onPressed: () {
-            setState(() {
-              if (_quantity > widget.minValue) {
-                _quantity--;
-                widget.onChanged(_quantity);
-                databaseController.currentQuantity.value = _quantity;
-              }
-            });
+            if (databaseController.currentQuantity.value > widget.minValue) {
+              databaseController.currentQuantity.value--;
+              widget.onChanged(databaseController.currentQuantity.value);
+            }
           },
         ),
         SizedBox(
           width: 20,
           child: Center(
-            child: PrimaryText(
-              text: '$_quantity',
-              color: Theme.of(context).colorScheme.inversePrimary,
-              fontSize: 17,
+            child: Obx(
+              () => PrimaryText(
+                text: databaseController.currentQuantity.value.toString(),
+                color: Theme.of(context).colorScheme.inversePrimary,
+                fontSize: 17,
+              ),
             ),
           ),
         ),
         IconButton(
           icon: Icon(Icons.add),
           onPressed: () {
-            setState(() {
-              if (_quantity < widget.maxValue) {
-                _quantity++;
-                widget.onChanged(_quantity);
-                databaseController.currentQuantity.value = _quantity;
-              }
-            });
+            if (databaseController.currentQuantity.value < widget.maxValue) {
+              databaseController.currentQuantity.value++;
+              widget.onChanged(databaseController.currentQuantity.value);
+            }
           },
         ),
       ],

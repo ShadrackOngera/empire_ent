@@ -31,7 +31,8 @@ class DatabaseController extends GetxController {
     String ticketId,
     String phoneNumber,
     String email,
-   
+    String ticketType,
+    int quantity,
   ) async {
     // Get reference to the collection
     final ticketsCollection = FirebaseFirestore.instance.collection('tickets');
@@ -51,8 +52,8 @@ class DatabaseController extends GetxController {
           'Ticket Id': ticketId,
           'Phone Number': phoneNumber,
           'Email': email,
-          'Ticket Type': currentTicketType.value,
-          'Quantity': currentQuantity.value,
+          'Ticket Type': ticketType,
+          'Quantity': quantity,
           'Attended': false,
         });
         return true;
