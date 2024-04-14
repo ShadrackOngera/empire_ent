@@ -18,10 +18,10 @@ class _ScanTabState extends State<ScanTab> {
   Future<void> scanQR() async {
     try {
       final scannedData = await FlutterBarcodeScanner.scanBarcode(
-        "#ff6666", // Color for the scanning layout
-        "Cancel", // Button text to cancel scanning
-        true, // Show flash icon
-        ScanMode.QR, // Scan mode (QR, BARCODE, etc.)
+        "#ff6666",
+        "Cancel",
+        true,
+        ScanMode.QR,
       );
 
       if (!mounted) return;
@@ -30,7 +30,6 @@ class _ScanTabState extends State<ScanTab> {
         _scannedData = scannedData;
       });
 
-      // Call your method to mark ticket as entered with the scanned data
       await databaseController.markTicketAsEntered(_scannedData);
     } catch (e) {
       print('Error while scanning QR code: $e');
@@ -45,9 +44,10 @@ class _ScanTabState extends State<ScanTab> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           PrimaryTextField(
-              controller: _ticketNumberController,
-              obsecureText: false,
-              label: 'Ticket Number'),
+            controller: _ticketNumberController,
+            obsecureText: false,
+            label: 'Ticket Number',
+          ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
