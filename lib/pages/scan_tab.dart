@@ -2,6 +2,7 @@ import 'package:empire_ent/database/database.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class ScanTab extends StatefulWidget {
   const ScanTab({super.key});
@@ -13,6 +14,29 @@ class ScanTab extends StatefulWidget {
 class _ScanTabState extends State<ScanTab> {
   final TextEditingController _ticketNumberController = TextEditingController();
   final DatabaseController databaseController = Get.put(DatabaseController());
+  String _scannedData = '';
+  Future<void> scanQR() async {
+    try {
+      final scannedData = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666", // Color for the scanning layout
+        "Cancel", // Button text to cancel scanning
+        true, // Show flash icon
+        ScanMode.QR, // Scan mode (QR, BARCODE, etc.)
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _scannedData = scannedData;
+      });
+
+      // Call your method to mark ticket as entered with the scanned data
+      await databaseController.markTicketAsEntered(_scannedData);
+    } catch (e) {
+      print('Error while scanning QR code: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -44,6 +68,16 @@ class _ScanTabState extends State<ScanTab> {
               }
             },
             child: Text('Mark as Entered'),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+            onPressed: () => scanQR(),
+            child: Text('Scan'),
+          ),
+          const SizedBox(
+            height: 30,
           ),
         ],
       ),

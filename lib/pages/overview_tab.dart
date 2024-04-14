@@ -46,7 +46,7 @@ class _OverviewTabState extends State<OverviewTab> {
                   var phoneNumber = ticketData['Phone Number'] as String? ??
                       'No Phone Number';
                   var attended = ticketData['Attended'] ?? false;
-                  var quantity = ticketData['Quantity'] as String? ?? 'Null';
+                  var quantity = ticketData['Quantity'] as int? ?? 1;
                   var ticketType =
                       ticketData['Ticket Type'] as String? ?? 'Invalid';
                   return ListTile(
@@ -61,7 +61,7 @@ class _OverviewTabState extends State<OverviewTab> {
                     subtitle: Row(
                       children: [
                         PrimaryText(
-                          text: quantity,
+                          text: quantity.toString(),
                           color: Theme.of(context).colorScheme.inversePrimary,
                         ),
                         const Padding(

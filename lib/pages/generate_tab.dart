@@ -47,7 +47,6 @@ class _GenerateTabState extends State<GenerateTab> {
         content: Text('PDF saved successfully'),
       ));
 
-      // Share the saved file
       Share.shareFiles(['${dir.path}/$name.pdf']);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +77,7 @@ class _GenerateTabState extends State<GenerateTab> {
       isLoading = true;
     });
     databaseController.currentName.value = nameController.text;
+    databaseController.currentTicketId.value = ticketIdController.text;
     databaseController.currentEmail.value = emailController.text;
     databaseController.currentPhoneNumber.value = phoneNumberController.text;
     // databaseController.currentQuantity.value = quantityController.text;
@@ -89,8 +89,8 @@ class _GenerateTabState extends State<GenerateTab> {
         ticketIdController.text,
         phoneNumberController.text,
         emailController.text,
-        ticketTypeController.text,
-        quantityController.text,
+        // ticketTypeController.text,
+        // quantityController.text,
       )
           .then(
         (value) async {
@@ -100,6 +100,7 @@ class _GenerateTabState extends State<GenerateTab> {
           await saveFile(bytes, 'Ticket');
         },
       );
+      clearForm();
     } else {
       setState(() {
         isLoading = false;
@@ -132,7 +133,7 @@ class _GenerateTabState extends State<GenerateTab> {
                     label: 'Name',
                     obsecureText: false,
                     controller: nameController,
-                    hintText: 'Name',
+                    // hintText: 'Name',
                   ),
                   const SizedBox(
                     height: 20,
@@ -141,7 +142,7 @@ class _GenerateTabState extends State<GenerateTab> {
                     label: 'Ticket Id',
                     obsecureText: false,
                     controller: ticketIdController,
-                    hintText: 'Ticket Id',
+                    // hintText: 'Ticket Id',
                   ),
                   const SizedBox(
                     height: 20,
@@ -150,7 +151,7 @@ class _GenerateTabState extends State<GenerateTab> {
                     label: 'Phone Number',
                     obsecureText: false,
                     controller: phoneNumberController,
-                    hintText: 'Phone Number',
+                    // hintText: 'Phone Number',
                   ),
                   const SizedBox(
                     height: 20,
@@ -159,16 +160,7 @@ class _GenerateTabState extends State<GenerateTab> {
                     label: 'Email',
                     obsecureText: false,
                     controller: emailController,
-                    hintText: 'Email',
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryTextField(
-                    label: 'Ticket Type',
-                    obsecureText: false,
-                    controller: ticketTypeController,
-                    hintText: 'Email',
+                    // hintText: 'Email',
                   ),
                   const SizedBox(
                     height: 20,
@@ -186,23 +178,32 @@ class _GenerateTabState extends State<GenerateTab> {
                                   Theme.of(context).colorScheme.inversePrimary,
                             ),
                             DropdownButton<String>(
-                              value: databaseController.currentTicketType.value,
+                              value: dropdownValue,
                               isExpanded: true,
-                              onChanged: (String? value) {
-                                databaseController.currentTicketType.value =
-                                    value!;
+                              onChanged: (value) {
+                                setState(() {
+                                  dropdownValue = value!;
+                                  databaseController.currentTicketType.value =
+                                      value;
+                                });
                               },
                               items: list.map<DropdownMenuItem<String>>(
                                   (String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value),
+                                  child: PrimaryText(
+                                    text: value,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                  ),
                                 );
                               }).toList(),
                             ),
                           ],
                         ),
                       ),
+                      Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -210,21 +211,15 @@ class _GenerateTabState extends State<GenerateTab> {
                             text: 'Ticket Type',
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
-                          QuantitySelector(onChanged: (value) {
-                            databaseController.currentQuantity.value = value;
-                          }),
+                          QuantitySelector(
+                            onChanged: (value) {
+                              databaseController.currentQuantity.value = value;
+                            },
+                          ),
                         ],
                       ),
+                      Spacer(),
                     ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryTextField(
-                    label: 'Quantity',
-                    obsecureText: false,
-                    controller: quantityController,
-                    hintText: 'Quantity',
                   ),
                   const SizedBox(
                     height: 20,
@@ -329,7 +324,7 @@ class _GenerateTabState extends State<GenerateTab> {
                   ),
                   pw.BarcodeWidget(
                     barcode: pw.Barcode.qrCode(),
-                    data: databaseController.currentTicketId.value,
+                    data: databaseController.currentTicketId.value.toString(),
                     width: 100,
                     height: 100,
                   ),

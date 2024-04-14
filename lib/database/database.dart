@@ -31,8 +31,7 @@ class DatabaseController extends GetxController {
     String ticketId,
     String phoneNumber,
     String email,
-    String ticketType,
-    String quantity,
+   
   ) async {
     // Get reference to the collection
     final ticketsCollection = FirebaseFirestore.instance.collection('tickets');
@@ -56,6 +55,7 @@ class DatabaseController extends GetxController {
           'Quantity': currentQuantity.value,
           'Attended': false,
         });
+        return true;
       }
     } catch (e) {
       WidgetHelper.snackbar(
@@ -64,7 +64,6 @@ class DatabaseController extends GetxController {
       );
       return false;
     }
-    return true;
   }
 
   Future<void> markTicketAsEntered(String ticketNumber) async {
