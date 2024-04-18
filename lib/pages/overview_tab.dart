@@ -66,7 +66,7 @@ class _OverviewTabState extends State<OverviewTab> {
             future: _ticketsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -100,6 +100,7 @@ class _OverviewTabState extends State<OverviewTab> {
                       height: 20,
                     ),
                     ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (context, index) {
