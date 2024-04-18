@@ -1,10 +1,12 @@
 import 'package:empire_ent/controllers/database_controller.dart';
+import 'package:empire_ent/services/auth/auth_service.dart';
 import 'package:empire_ent/services/pdf/pdf_generator.dart';
 import 'package:empire_ent/utils/widget_helper.dart';
 import 'package:empire_ent/widgets/primary_button.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:empire_ent/widgets/primary_text_field.dart';
 import 'package:empire_ent/widgets/quantity_selector.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:io';
@@ -116,6 +118,27 @@ class _GenerateTabState extends State<GenerateTab> {
     'VIP',
   ];
   String dropdownValue = 'Single';
+  String _email = 'Loading...';
+  final AuthService _authService = AuthService();
+  Future<void> _fetchEmail() async {
+    User? user =
+        _authService.getCurrentUser(); // Use getCurrentUser() from AuthService
+    if (user != null) {
+      setState(() {
+        _email = user.email ?? 'Email not found';
+      });
+    } else {
+      setState(() {
+        _email = 'No user logged in';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, _fetchEmail);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,143 +146,158 @@ class _GenerateTabState extends State<GenerateTab> {
         ? const CircularProgressIndicator()
         : SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 15),
-            child: Form(
-              key: saveDetailsKey,
-              child: Column(
-                children: [
-                  PrimaryTextField(
-                    label: 'Name',
-                    obsecureText: false,
-                    controller: nameController,
-                    // hintText: 'Name',
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryTextField(
-                    label: 'Ticket Id',
-                    obsecureText: false,
-                    controller: ticketIdController,
-                    // hintText: 'Ticket Id',
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryTextField(
-                    label: 'Phone Number',
-                    obsecureText: false,
-                    controller: phoneNumberController,
-                    // hintText: 'Phone Number',
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryTextField(
-                    label: 'Email',
-                    obsecureText: false,
-                    controller: emailController,
-                    // hintText: 'Email',
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .5,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            child: (_email == 'mark@gmail.com' ||
+                    _email == 'shadrack@gmail.com')
+                ? Form(
+                    key: saveDetailsKey,
+                    child: Column(
+                      children: [
+                        PrimaryTextField(
+                          label: 'Name',
+                          obsecureText: false,
+                          controller: nameController,
+                          // hintText: 'Name',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        PrimaryTextField(
+                          label: 'Ticket Id',
+                          obsecureText: false,
+                          controller: ticketIdController,
+                          // hintText: 'Ticket Id',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        PrimaryTextField(
+                          label: 'Phone Number',
+                          obsecureText: false,
+                          controller: phoneNumberController,
+                          // hintText: 'Phone Number',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        PrimaryTextField(
+                          label: 'Email',
+                          obsecureText: false,
+                          controller: emailController,
+                          // hintText: 'Email',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            PrimaryText(
-                              text: 'Ticket Type',
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                            ),
-                            DropdownButtonFormField<String>(
-                              value: list.contains(databaseController
-                                      .currentTicketType.value)
-                                  ? databaseController.currentTicketType.value
-                                  : 'Single',
-                              isExpanded: true,
-                              onChanged: (value) {
-                                databaseController.currentTicketType.value =
-                                    value!;
-                              },
-                              items: list.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: PrimaryText(
-                                    text: value,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .5,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  PrimaryText(
+                                    text: 'Ticket Type',
                                     color: Theme.of(context)
                                         .colorScheme
                                         .inversePrimary,
                                   ),
-                                );
-                              }).toList(),
-                              decoration: InputDecoration(
-                                hintStyle: TextStyle(
+                                  DropdownButtonFormField<String>(
+                                    value: list.contains(databaseController
+                                            .currentTicketType.value)
+                                        ? databaseController
+                                            .currentTicketType.value
+                                        : 'Single',
+                                    isExpanded: true,
+                                    onChanged: (value) {
+                                      databaseController
+                                          .currentTicketType.value = value!;
+                                    },
+                                    items: list.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: PrimaryText(
+                                          text: value,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                PrimaryText(
+                                  text: 'Quantity',
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
-                                  ),
+                                QuantitySelector(
+                                  onChanged: (value) {
+                                    databaseController.currentQuantity.value =
+                                        value;
+                                  },
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
+                            const Spacer(),
                           ],
                         ),
-                      ),
-                      const Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          PrimaryText(
-                            text: 'Quantity',
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        PrimaryButton(
+                          onTap: () => saveAndGenerate(),
+                          child: PrimaryText(
+                            text: 'Save and Generate',
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
-                          QuantitySelector(
-                            onChanged: (value) {
-                              databaseController.currentQuantity.value = value;
-                            },
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  PrimaryButton(
-                    onTap: () => saveAndGenerate(),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  )
+                : Center(
                     child: PrimaryText(
-                      text: 'Save and Generate',
+                      text: 'Scan Users On The Scan Tab',
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
-            ),
           );
   }
 
