@@ -89,10 +89,10 @@ class _GenerateTabState extends State<GenerateTab> {
           .then(
         (value) async {
           var doc = await generatePdf(
-            email: emailController.text,
+            email: databaseController.currentEmail.value,
             ticketType: databaseController.currentTicketType.value,
             quantity: databaseController.currentQuantity.value,
-            ticketId: ticketIdController.text,
+            ticketId: databaseController.currentTicketId.value,
           );
           var bytes = await doc.save();
           await saveFile(bytes, 'Ticket');
@@ -183,11 +183,8 @@ class _GenerateTabState extends State<GenerateTab> {
                                   : 'Single',
                               isExpanded: true,
                               onChanged: (value) {
-                                print('value: $value');
                                 databaseController.currentTicketType.value =
                                     value!;
-                                print(
-                                    'object value: ${databaseController.currentTicketType.value}');
                               },
                               items: list.map<DropdownMenuItem<String>>(
                                   (String value) {
@@ -226,7 +223,7 @@ class _GenerateTabState extends State<GenerateTab> {
                           ],
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -241,7 +238,7 @@ class _GenerateTabState extends State<GenerateTab> {
                           ),
                         ],
                       ),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
                   const SizedBox(
@@ -274,97 +271,96 @@ class _GenerateTabState extends State<GenerateTab> {
     );
   }
 
-  Future<pw.Page> _generatePdf() async {
-    final ByteData data = await rootBundle.load('assets/images/image-two.png');
-    final List<int> bytes = data.buffer.asUint8List();
+  // Future<pw.Page> _generatePdf() async {
+  //   final ByteData data = await rootBundle.load('assets/images/image-two.png');
+  //   final List<int> bytes = data.buffer.asUint8List();
 
-    final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/image-two.png');
-    await tempFile.writeAsBytes(bytes);
+  //   final tempDir = await getTemporaryDirectory();
+  //   final tempFile = File('${tempDir.path}/image-two.png');
+  //   await tempFile.writeAsBytes(bytes);
 
-    final image = pw.MemoryImage(tempFile.readAsBytesSync());
-    final String ticketType = databaseController.currentTicketType.value;
-    pw.TextStyle textStyle = pw.TextStyle(
-      color: const PdfColor.fromInt(0xFF00004d),
-      fontSize: 13,
-      fontWeight: pw.FontWeight.bold,
-    );
+  //   final image = pw.MemoryImage(tempFile.readAsBytesSync());
+  //   pw.TextStyle textStyle = pw.TextStyle(
+  //     color: const PdfColor.fromInt(0xFF00004d),
+  //     fontSize: 13,
+  //     fontWeight: pw.FontWeight.bold,
+  //   );
 
-    return pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (pw.Context context) {
-        return pw.Padding(
-          padding: const pw.EdgeInsets.all(8.0),
-          child: pw.Column(
-            children: [
-              pw.SizedBox(height: 20),
-              pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-                children: [
-                  pw.ClipRRect(
-                    horizontalRadius: 10,
-                    verticalRadius: 10,
-                    child: pw.Image(
-                      image,
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                  pw.Text(
-                    'Thank You for buying :)',
-                    style: textStyle,
-                  ),
-                ],
-              ),
-              pw.SizedBox(height: 80),
-              pw.Text(
-                "Receipt",
-                style: textStyle,
-              ),
-              pw.SizedBox(height: 20),
-              pw.Divider(),
-              pw.SizedBox(height: 20),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                children: [
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(
-                        'Email: ${databaseController.currentEmail.value}',
-                        style: textStyle,
-                      ),
-                      pw.Text(
-                        'Ticket Type: ${databaseController.currentTicketType.value}',
-                        style: textStyle,
-                      ),
-                      pw.Text(
-                        'Quantity:  ${databaseController.currentQuantity.value}',
-                        style: textStyle,
-                      ),
-                    ],
-                  ),
-                  pw.BarcodeWidget(
-                    barcode: pw.Barcode.qrCode(),
-                    data: databaseController.currentTicketId.value.toString(),
-                    width: 100,
-                    height: 100,
-                  ),
-                ],
-              ),
-              pw.SizedBox(height: 90),
-              pw.Center(
-                child: pw.Text(
-                  'Carry this document for verification',
-                  style: textStyle,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  //   return pw.Page(
+  //     pageFormat: PdfPageFormat.a4,
+  //     build: (pw.Context context) {
+  //       return pw.Padding(
+  //         padding: const pw.EdgeInsets.all(8.0),
+  //         child: pw.Column(
+  //           children: [
+  //             pw.SizedBox(height: 20),
+  //             pw.Row(
+  //               crossAxisAlignment: pw.CrossAxisAlignment.center,
+  //               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+  //               children: [
+  //                 pw.ClipRRect(
+  //                   horizontalRadius: 10,
+  //                   verticalRadius: 10,
+  //                   child: pw.Image(
+  //                     image,
+  //                     width: 100,
+  //                     height: 100,
+  //                   ),
+  //                 ),
+  //                 pw.Text(
+  //                   'Thank You for buying :)',
+  //                   style: textStyle,
+  //                 ),
+  //               ],
+  //             ),
+  //             pw.SizedBox(height: 80),
+  //             pw.Text(
+  //               "Receipt",
+  //               style: textStyle,
+  //             ),
+  //             pw.SizedBox(height: 20),
+  //             pw.Divider(),
+  //             pw.SizedBox(height: 20),
+  //             pw.Row(
+  //               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+  //               crossAxisAlignment: pw.CrossAxisAlignment.center,
+  //               children: [
+  //                 pw.Column(
+  //                   crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //                   children: [
+  //                     pw.Text(
+  //                       'Email: ${databaseController.currentEmail.value}',
+  //                       style: textStyle,
+  //                     ),
+  //                     pw.Text(
+  //                       'Ticket Type: ${databaseController.currentTicketType.value}',
+  //                       style: textStyle,
+  //                     ),
+  //                     pw.Text(
+  //                       'Quantity:  ${databaseController.currentQuantity.value}',
+  //                       style: textStyle,
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 pw.BarcodeWidget(
+  //                   barcode: pw.Barcode.qrCode(),
+  //                   data: databaseController.currentTicketId.value.toString(),
+  //                   width: 100,
+  //                   height: 100,
+  //                 ),
+  //               ],
+  //             ),
+  //             pw.SizedBox(height: 90),
+  //             pw.Center(
+  //               child: pw.Text(
+  //                 'Carry this document for verification',
+  //                 style: textStyle,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
