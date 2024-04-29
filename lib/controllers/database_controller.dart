@@ -34,7 +34,6 @@ class DatabaseController extends GetxController {
     String ticketType,
     int quantity,
   ) async {
-    // Get reference to the collection
     final ticketsCollection = FirebaseFirestore.instance.collection('tickets');
 
     try {
@@ -69,7 +68,6 @@ class DatabaseController extends GetxController {
 
   Future<void> markTicketAsEntered(String ticketNumber) async {
     try {
-      // Get reference to the tickets collection
       final ticketsCollection =
           FirebaseFirestore.instance.collection('tickets');
 
@@ -78,23 +76,16 @@ class DatabaseController extends GetxController {
           .where('Ticket Id', isEqualTo: ticketNumber)
           .get();
 
-      // Check if a ticket with the given number exists
       if (querySnapshot.docs.isNotEmpty) {
         final ticketDoc = querySnapshot.docs.first;
         final ticketData = ticketDoc.data();
-
-        // Check if the ticket has already been attended
         if (ticketData['Attended'] == true) {
-          // Inform the user that the ticket has already been marked as attended
           WidgetHelper.snackbar('Failed', 'User has Already Joined the Event');
-          // throw Exception('Ticket already marked as entered.');
         } else {
-          // If the user chooses to mark the ticket as entered, update the database
           await ticketsCollection.doc(ticketDoc.id).update({'Attended': true});
         }
       } else {
         WidgetHelper.snackbar('Failed', 'Ticket Not Found');
-        // throw Exception('Ticket not found.');
       }
     } catch (e) {
       // Handle any errors

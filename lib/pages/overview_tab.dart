@@ -7,6 +7,7 @@ import 'package:empire_ent/services/pdf/pdf_generator.dart';
 import 'package:empire_ent/utils/widget_helper.dart';
 import 'package:empire_ent/widgets/primary_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -153,6 +154,9 @@ class _OverviewTabState extends State<OverviewTab> {
                           ),
                           trailing: IconButton(
                             onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: email),
+                              );
                               var doc = await generatePdf(
                                 email: email,
                                 ticketType: ticketType,
